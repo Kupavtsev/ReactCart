@@ -21,14 +21,20 @@ export default class App extends Component {
     };
     this.routerRef = React.createRef();
   }
-
-  componentDidMount() {
+  // lifecycle hook as being async, which means we can make a request to our /products endpoint,
+  // then wait for the data to be returned before sticking it into state
+  async componentDidMount() {
     let user = localStorage.getItem("user");
+    let cart = localStorage.getItem("cart");
+  
+    const products = await axios.get('http://localhost:3001/products');
     user = user ? JSON.parse(user) : null;
-    this.setState({ user });
+    cart = cart ? JSON.parse(cart) : {};
+  
+    this.setState({ user,  products: products.data, cart });
   }
 
-  login = async (email, password) => {
+  login = async (email, password) => {        // The login method makes an Ajax request to our /login endpoint
     const res = await axios.post(
       'http://localhost:3001/login',
       { email, password },
@@ -56,6 +62,64 @@ export default class App extends Component {
     e.preventDefault();
     this.setState({ user: null });
     localStorage.removeItem("user");
+  };
+
+  addProduct = (product, callback) => {
+    let products = this.state.products.slice();   // copy Array of products from state
+    products.push(product);
+    this.setState({ products }, () => callback && callback());
+  };
+
+  addToCart = cartItem => {
+    let cart = this.state.cart;
+    if (cart[cartItem.id]) {
+      cart[cartItem.id].amount += cartItem.amount;
+    } else {
+      cart[cartItem.id] = cartItem;
+    }
+    if (cart[cartItem.id].amount > cart[cartItem.id].product.stock) {
+      cart[cartItem.id].amount = cart[cartItem.id].product.stock;
+    }
+    localStorage.setItem("cart", JSON.stringify(cart));
+    this.setState({ cart });
+  };
+
+  removeFromCart = cartItemId => {
+    let cart = this.state.cart;
+    delete cart[cartItemId];
+    localStorage.setItem("cart", JSON.stringify(cart));
+    this.setState({ cart });
+  };
+  
+  clearCart = () => {
+    let cart = {};
+    localStorage.removeItem("cart");
+    this.setState({ cart });
+  };
+
+  checkout = () => {
+    if (!this.state.user) {         // This method checks to see that a user is logged in before it proceeds.
+      this.routerRef.current.history.push("/login");    // using the router reference we attached to the Router component earlier.
+      return;
+    }
+  
+    const cart = this.state.cart;
+
+    //remove their purchased items from the list of available items
+    const products = this.state.products.map(p => {
+      if (cart[p.name]) {
+        p.stock = p.stock - cart[p.name].amount;
+        
+        axios.put(                                    // use axios to update the stock level in our back end
+          `http://localhost:3001/products/${p.id}`,
+          { ...p },
+        )
+      }
+      return p;
+    });
+  
+    this.setState({ products });
+    this.clearCart();
   };
 
   render() {
@@ -86,7 +150,7 @@ export default class App extends Component {
               <b className="navbar-item is-size-4 ">ecommerce</b>
               <label
                 role="button"
-                class="navbar-burger burger"
+                className="navbar-burger burger"
                 aria-label="menu"
                 aria-expanded="false"
                 data-target="navbarBasicExample"

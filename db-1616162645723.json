@@ -30,11 +30,11 @@
     },
     {
       "id": "aoe8wvdxvrkfqsew67",
-      "name": "Investment Ideas",
-      "stock": 0,
-      "price": 150,
-      "shortDesc": "We have a different ways to park your money.",
-      "description": "What is more liquide in our day, this actives we always have in our cart."
+      "name": "shirts",
+      "stock": 15,
+      "price": 149.99,
+      "shortDesc": "Nulla facilisi. Curabitur at lacus ac velit ornare lobortis.",
+      "description": "Cras sagittis. Praesent nec nisl a purus blandit viverra. Ut leo. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Fusce a quam."
     },
     {
       "id": "bmfrurdkswtkfqsf15j",
@@ -51,14 +51,6 @@
       "price": 150,
       "shortDesc": "We have a different ways to park your money.",
       "description": "What is more liquide in our day, this actives we always have in our cart."
-    },
-    {
-      "id": "3671jr0e1brkmgehrlz",
-      "name": "Laptop",
-      "price": "400",
-      "stock": 0,
-      "shortDesc": "Laptop for VA",
-      "description": "I need Laptop to present it VA"
     }
   ]
 }

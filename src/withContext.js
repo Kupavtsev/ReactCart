@@ -11,7 +11,7 @@ we’re wrapping the component in our context, then assigning it the context as 
 The {...props} bit ensures that the component retains any props that were passed to it in the first place.
 */
 
-const withContext = WrappedComponent => {
+const withContext = (WrappedComponent) => {
   const WithHOC = props => {
     return (
       <Context.Consumer>
